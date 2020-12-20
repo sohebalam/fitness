@@ -5,7 +5,6 @@ import router from "./router.js"
 
 import dotenv from "dotenv"
 const app = express()
-
 app.use(cors())
 app.use(express.json())
 
@@ -13,6 +12,7 @@ if (process.env.NODE_ENV !== "production") {
   dotenv.config()
 }
 const PORT = process.env.PORT || 8000
+
 try {
   mongoose.connect(process.env.DB, {
     useNewUrlParser: true,
