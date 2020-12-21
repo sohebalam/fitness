@@ -6,8 +6,9 @@ import router from "./router.js"
 import dotenv from "dotenv"
 const app = express()
 app.use(cors())
-app.use(express.json())
 
+app.use(express.json())
+app.use(router)
 if (process.env.NODE_ENV !== "production") {
   dotenv.config()
 }
@@ -22,8 +23,6 @@ try {
 } catch (error) {
   console.log(error)
 }
-
-app.use(router)
 
 app.listen(PORT, () => {
   console.log(`Listening on ${PORT}`)

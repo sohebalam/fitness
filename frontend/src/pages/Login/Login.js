@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import Button from "@material-ui/core/Button"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import TextField from "@material-ui/core/TextField"
@@ -75,7 +75,6 @@ export default function Login({ history }) {
             name="email"
             autoComplete="email"
             autoFocus
-            // onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -88,7 +87,6 @@ export default function Login({ history }) {
             type="password"
             id="password"
             autoComplete="current-password"
-            // onChange={(e) => setPassword(e.target.value)}
           />
 
           <Button

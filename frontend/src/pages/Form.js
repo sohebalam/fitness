@@ -1,24 +1,39 @@
-import React, { useState } from "react"
-import api from "../../services/api"
-import useStyles from "../styles"
 import { Button, Paper, TextField, Typography } from "@material-ui/core"
+import React, { useState, useEffect } from "react"
 import FileBase from "react-file-base64"
 import { useForm } from "react-hook-form"
+import { useDispatch, useSelector } from "react-redux"
 
-export default function Dashboard() {
-  // const [title, setTitle] = useState("")
-  // const [description, setDescription] = useState("")
-  // const [price, setPrice] = useState("")
-  // const [thumbnail, setThumbnail] = useState("")
-  // const [date, setDate] = useState("")
-  const [postData, setPostData] = useState({ selectedFile: "" })
-  const { register, handleSubmit } = useForm()
+import { createPost, updatePost } from "../../actions/postActions"
 
-  const Submit = (evt) => {
-    // console.log(evt, postData)
-    // console.log(postData)
-    let event = Object.assign(evt, postData)
-    console.log(event)
+import useStyles from "./styles"
+
+const Form = ({ currentId, setCurrentId }) => {
+  const [postData, setPostData] = useState({
+    creator: "",
+    title: "",
+    message: "",
+    tags: "",
+    selectedFile: "",
+  })
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (post) setPostData(post)
+  }, [post])
+
+  const Submit = (e) => {
+    e.preventDefault()
+    dispatch(createPost(postData))
+  }
+
+  if (currentId) {
+    dispatch(updatePost(currentId, postData))
+  }
+
+  const clear = () => {
+    console.log("handle")
   }
 
   const classes = useStyles()
@@ -28,16 +43,15 @@ export default function Dashboard() {
         autoComplete="off"
         noValidate
         className={`${classes.root} ${classes.form}`}
-        onSubmit={handleSubmit(Submit)}
+        onSubmit={handelSubmit(Submit)}
       >
-        <Typography variant="h6">Creating an Event</Typography>
+        <Typography variant="h6">Creating a Memory</Typography>
         <TextField
-          name="sport"
+          name="creator"
           variant="outlined"
-          inputRef={register}
-          label="Sport"
+          label="Creator"
           fullWidth
-          // value={postData.creator}
+          value={postData.creator}
           // onChange={(e) =>
           // setPostData({ ...postData, creator: e.target.value })
           // }
@@ -45,28 +59,28 @@ export default function Dashboard() {
         <TextField
           name="title"
           variant="outlined"
-          inputRef={register}
           label="Title"
+          inputRef={register}
           fullWidth
-          // value={postData.title}
+          value={postData.title}
           // onChange={(e) => setPostData({ ...postData, title: e.target.value })}
         />{" "}
         <TextField
-          name="description"
+          name="message"
           variant="outlined"
+          label="Message"
           inputRef={register}
-          label="description"
           fullWidth
-          // value={postData.message}
+          value={postData.message}
           // onChange={(e) =>
-          // setPostData({ ...postData, message: e.target.value })
+          //   setPostData({ ...postData, message: e.target.value })
           // }
         />{" "}
         <TextField
-          name="price"
+          name="tags"
           variant="outlined"
+          label="Tags"
           inputRef={register}
-          label="Event Price £0.00"
           fullWidth
           // value={postData.tags}
           // onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
@@ -74,12 +88,11 @@ export default function Dashboard() {
         <div className={classes.fileInput}>
           <FileBase
             type="file"
-            // name="file"
+            inputRef={register}
             multiple={false}
-            // inputRef={register}
-            onDone={({ base64 }) =>
-              setPostData({ ...postData, selectedFile: base64 })
-            }
+            // onDone={({ base64 }) =>
+            //   setPostData({ ...postData, selectedFile: base64 })
+            // }
           />
           <Button
             className={classes.buttonSubmit}
@@ -96,7 +109,7 @@ export default function Dashboard() {
             color="secondary"
             size="large"
             type="submit"
-            // onClick={clear}
+            onClick={clear}
             fullWidth
           >
             Clear
@@ -106,3 +119,5 @@ export default function Dashboard() {
     </Paper>
   )
 }
+
+export default Form
