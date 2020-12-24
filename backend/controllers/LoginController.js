@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt"
 import User from "../models/User.js"
+import jwt from "jsonwebtoken"
 
 export const store = async (req, res) => {
   try {
@@ -23,7 +24,13 @@ export const store = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
       }
-      return res.json(userResponse)
+      return jwt.sign({ user: userResponse }, "secret", (err, token) => {
+        return res.json({
+          user: token,
+          user_id: userResponse._id,
+        })
+      })
+      // return res.json(userResponse)
     } else {
       return res
         .status(200)

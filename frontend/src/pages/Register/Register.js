@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import Button from "@material-ui/core/Button"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import TextField from "@material-ui/core/TextField"
@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container"
 import { useForm } from "react-hook-form"
 import api from "../../services/api"
+import { Alert } from "@material-ui/lab"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -32,27 +33,48 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Register({ history }) {
   const classes = useStyles()
-
+  const [errorMessage, setErrorMessage] = useState(false)
+  const [error, setError] = useState("false")
   const { register, handleSubmit } = useForm()
   const Submit = async (evt) => {
     const { email, password, firstName, lastName } = evt
 
     console.log("result of the submit", email, firstName, lastName)
+    if (
+      email !== "" &&
+      password !== "" &&
+      firstName !== "" &&
+      lastName !== ""
+    ) {
+      const response = await api.post("/user/register", {
+        email,
+        password,
+        firstName,
+        lastName,
+      })
+      const user = response.data.user || false
+      const user_id = response.data.user_id || false
 
-    const response = await api.post("/user/register", {
-      email,
-      password,
-      firstName,
-      lastName,
-    })
-    const userId = response.data._id || false
-
-    if (userId) {
-      localStorage.setItem("user", userId)
-      history.push("/dashboard")
+      if (user_id && user) {
+        localStorage.setItem("user", user)
+        localStorage.setItem("user_id", user_id)
+        history.push("/dashboard")
+      } else {
+        const { message } = response.data
+        setError(true)
+        setErrorMessage(message)
+        setTimeout(() => {
+          setError(false)
+          setErrorMessage("")
+        }, 2000)
+      }
     } else {
-      const { message } = response.data
-      console.log(message)
+      setError(true)
+      setErrorMessage("Please fill in all the fields")
+      setTimeout(() => {
+        setError(false)
+        setErrorMessage("")
+      }, 2000)
     }
   }
 
@@ -134,6 +156,14 @@ export default function Register({ history }) {
             <Grid item></Grid>
           </Grid>
         </form>
+        {errorMessage ? (
+          <Alert style={{ marginTop: 10 }} variant="outlined" severity="error">
+            {" "}
+            {errorMessage}
+          </Alert>
+        ) : (
+          ""
+        )}
       </div>
       <Box mt={5}></Box>
     </Container>
